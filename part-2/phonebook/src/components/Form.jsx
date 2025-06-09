@@ -15,7 +15,7 @@ const Form = ({
         <Input label="Name" value={nameValue} onChange={onNameChange} />
         <Input label="Number" value={phoneValue} onChange={onPhoneChange} />
       </div>
-      <Button />
+      <Button text="Add" />
     </form>
   );
 };
