@@ -24,10 +24,7 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 20px;
 }
 
 h1 {
@@ -65,4 +62,23 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+div {
+  margin: 10px 20px;
+}
+
+.success {
+  color: green;
+  background-color: rgb(135, 135, 135);
+  border-radius: 5px;
+  padding: 5px;
+  border: solid;
+}
+.error {
+  color: red;
+  background-color: rgb(135, 135, 135);
+  border-radius: 5px;
+  padding: 5px;
+  border: solid;
 }

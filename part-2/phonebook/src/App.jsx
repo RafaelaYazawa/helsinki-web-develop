@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 import SearchBar from "./components/SearchBar";
 import Form from "./components/Form";
 import FilteredList from "./components/FilteredList";
@@ -10,16 +11,17 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     personService.getAll().then((initialNames) => setPersons(initialNames));
   }, []);
-  // console.log("render", persons.length, "persons");
+
 
   const newPerson = (e) => {
     e.preventDefault();
-    // console.log("button was clicked...", e);
     const addingPerson = {
       name: newName,
       number: newPhone,
@@ -43,8 +45,27 @@ const App = () => {
                   p.id !== nameExists.id ? p : returnedPerson
                 )
               )
-            );
-          setNewName(""), setNewPhone("");
+            )
+            .catch((error) => {
+              setMessage(
+                `Information of ${nameExists.name} has already been removed`
+              );
+              setMessageType("error");
+              setTimeout(() => {
+                setMessage(null);
+                setMessageType(null);
+              }, 5000);
+            });
+          setNewName("");
+          setNewPhone("");
+          setMessage(
+            `${nameExists.name}'s phone number was successfully updated`
+          );
+          setMessageType("success");
+          setTimeout(() => {
+            setMessage(null);
+            setMessageType(null);
+          }, 5000);
         }
       } else {
         window.alert(`${newName} is already added to phonebook`);
@@ -56,7 +77,21 @@ const App = () => {
           (returnPerson) => setPersons(persons.concat(returnPerson)),
           setNewName(""),
           setNewPhone("")
-        );
+        )
+        .catch((error) => {
+          setMessage(`${error.messages}`);
+          setMessageType("error");
+          setTimeout(() => {
+            setMessage(null);
+            setMessageType(null);
+          }, 5000);
+        });
+      setMessage(`${addingPerson.name} was added to the phonebook`);
+      setMessageType("success");
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType(null);
+      }, 5000);
     }
   };
 
@@ -92,6 +127,7 @@ const App = () => {
   return (
     <div>
       <Header header="Phonebook" />
+      <Notification message={message} type={messageType} />
       <SearchBar value={searchTerm} onChange={handleSearchChange} />
       <Form
         value={newName}
