@@ -2,10 +2,27 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 const CountryDetails = ({ country }) => {
+  if (!country) return null;
+  // console.log("country", country);
+  const [countryWeather, setCountryWeather] = useState([]);
+
+  const apiKey = import.meta.env.VITE_WEATHER_KEY;
+  const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${country.latlng[0]}&lon=${country.latlng[1]}&appid=${apiKey}`;
+
+  useEffect(() => {
+    axios.get(weatherApiUrl).then((response) => {
+      console.log("response", response.data);
+      setCountryWeather(response.data);
+    });
+  }, [weatherApiUrl]);
+
+  console.log("url", weatherApiUrl);
+  console.log("weather?", countryWeather);
+
   return (
     <div>
       <h1>{country.name.common}</h1>
-      <p>Capital: {country.capital[0]}</p>
+      <p>Capital: {country.capital}</p>
       <p>Area - {country.area} km²</p>
       <h2>Languages</h2>
       <ul>
@@ -15,6 +32,10 @@ const CountryDetails = ({ country }) => {
       </ul>
 
       <img src={country.flags.png} alt={country.flags.alt} />
+
+      <h2>Weather in {country.name.common}</h2>
+      <p>Temperature - {countryWeather} </p>
+      {/* <p>{countryWeather}</p>x */}
     </div>
   );
 };
