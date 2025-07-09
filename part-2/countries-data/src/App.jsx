@@ -2,22 +2,23 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 const CountryDetails = ({ country }) => {
-  if (!country) return null;
-  // console.log("country", country);
-  const [countryWeather, setCountryWeather] = useState([]);
-
-  const apiKey = import.meta.env.VITE_WEATHER_KEY;
-  const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${country.latlng[0]}&lon=${country.latlng[1]}&appid=${apiKey}`;
+  const [countryWeather, setCountryWeather] = useState(null);
 
   useEffect(() => {
-    axios.get(weatherApiUrl).then((response) => {
-      console.log("response", response.data);
-      setCountryWeather(response.data);
-    });
-  }, [weatherApiUrl]);
+    if (!country || !country.latlng) return null;
+    const apiKey = import.meta.env.VITE_WEATHER_KEY;
 
-  console.log("url", weatherApiUrl);
-  console.log("weather?", countryWeather);
+    const [lat, lon] = country.latlng;
+    const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+    axios
+      .get(weatherApiUrl)
+      .then((response) => {
+        console.log("response", response.data);
+        setCountryWeather(response.data);
+      })
+      .catch((err) => console.log("Weather API error:", err));
+  }, [country]);
 
   return (
     <div>
@@ -33,9 +34,15 @@ const CountryDetails = ({ country }) => {
 
       <img src={country.flags.png} alt={country.flags.alt} />
 
-      <h2>Weather in {country.name.common}</h2>
-      <p>Temperature - {countryWeather} </p>
-      {/* <p>{countryWeather}</p>x */}
+      {countryWeather && (
+        <>
+          <h2>Weather in {country.name.common}</h2>
+          <p>Temperature - {countryWeather.main.temp}</p>
+          <img
+            src={`https://openweathermap.org/img/wn/${countryWeather.weather[0].icon}@2x.png`}
+          />
+        </>
+      )}
     </div>
   );
 };
