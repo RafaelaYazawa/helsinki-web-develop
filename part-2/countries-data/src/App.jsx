@@ -37,10 +37,11 @@ const CountryDetails = ({ country }) => {
       {countryWeather && (
         <>
           <h2>Weather in {country.name.common}</h2>
-          <p>Temperature - {countryWeather.main.temp}</p>
+          <p>Temperature - {countryWeather.main.temp} Celsius</p>
           <img
             src={`https://openweathermap.org/img/wn/${countryWeather.weather[0].icon}@2x.png`}
           />
+          <p>Wind - {countryWeather.wind.speed} m/s</p>
         </>
       )}
     </div>
