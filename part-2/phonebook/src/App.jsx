@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import personService from "./services/persons";
 import Notification from "./components/Notification";
 import SearchBar from "./components/SearchBar";
@@ -16,9 +16,10 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    personService.getAll().then((initialNames) => setPersons(initialNames));
+    personService.getAll().then((initialNames) => {
+      setPersons(initialNames);
+    });
   }, []);
-
 
   const newPerson = (e) => {
     e.preventDefault();
@@ -91,25 +92,32 @@ const App = () => {
       setTimeout(() => {
         setMessage(null);
         setMessageType(null);
-      }, 5000);
+      }, 3000);
     }
   };
 
   const filteredPerson = persons.filter((person) =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   const deletePerson = (id, name) => {
     const confirmDelete = window.confirm(
       `Are you sure you want to delete ${name}?`
     );
 
     if (confirmDelete) {
-      personService
-        .remove(id)
-        .then(() => setPersons(persons.filter((p) => p.id !== id)));
+      personService.remove(id).then(() => {
+        setPersons(persons.filter((p) => p.id !== id)),
+          setMessage(`${name} was successfully deleted`);
+        setMessageType("success");
+
+        setTimeout(() => {
+          setMessage(null);
+          setMessageType(null);
+        }, 3000);
+      });
     }
   };
-
   const handleNameChange = (e) => {
     // console.log(e.target.value);
     setNewName(e.target.value);
