@@ -9,12 +9,14 @@ const CountryDetails = ({ country }) => {
     const apiKey = import.meta.env.VITE_WEATHER_KEY;
 
     const [lat, lon] = country.latlng;
-    const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+    const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
     axios
       .get(weatherApiUrl)
       .then((response) => {
-        console.log("response", response.data);
+        // console.log("response", response.data);
+        console.log("url", weatherApiUrl);
+
         setCountryWeather(response.data);
       })
       .catch((err) => console.log("Weather API error:", err));
@@ -37,7 +39,7 @@ const CountryDetails = ({ country }) => {
       {countryWeather && (
         <>
           <h2>Weather in {country.name.common}</h2>
-          <p>Temperature - {countryWeather.main.temp} Celsius</p>
+          <p>Temperature - {Math.floor(countryWeather.main.temp)} Celsius</p>
           <img
             src={`https://openweathermap.org/img/wn/${countryWeather.weather[0].icon}@2x.png`}
           />
