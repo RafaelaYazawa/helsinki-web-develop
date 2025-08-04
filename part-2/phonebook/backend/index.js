@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 persons = [
   {
     id: "1",
@@ -26,7 +28,7 @@ persons = [
 
 app.get("/info", (request, response) => {
   response.send(
-    `<p>Phonebook has info for ${persons.length} persons</p>
+    `<p>Phonebook has info for ${persons.length} people</p>
     <p> ${new Date()}</p>`
   );
 });
@@ -37,13 +39,42 @@ app.get("/api/persons", (request, response) => {
 });
 
 const generateId = () => {
-  const maxId =
-    persons.length > 0 ? Math.max(...persons.map((n) => Number(n.id))) : 0;
-
-  return String(maxId + 1);
+  const randomId = () => Math.floor(Math.random() * 10000);
+  const getId = persons.length > 0 ? randomId() : 0;
+  return String(getId);
 };
 
-app.get("/api/persons/:id", (request, response) => {});
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  };
+
+  persons = persons.concat(person);
+
+  response.json(person);
+});
+
+app.get("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  const person = persons.find((person) => person.id === id);
+
+  if (person) {
+    response.json(person);
+  } else {
+    response.status(404).end();
+  }
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  const person = persons.filter((person) => person.id !== id);
+
+  response.status(204).end();
+});
 
 const PORT = 3001;
 
