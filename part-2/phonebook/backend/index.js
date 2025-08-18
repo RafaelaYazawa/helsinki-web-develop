@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+
+const Person = require("./modules/person");
+
 app.use(express.json());
 app.use(express.static("dist"));
 morgan.token("body", (req, res) => {
@@ -11,7 +14,7 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-let persons = [
+let person = [
   {
     id: "1",
     name: "Arto Hellas",
@@ -36,25 +39,26 @@ let persons = [
 
 app.get("/info", (request, response) => {
   response.send(
-    `<p>Phonebook has info for ${persons.length} people</p>
+    `<p>Phonebook has info for ${person.length} people</p>
     <p> ${new Date()}</p>`
   );
 });
 
 app.get("/api/persons", (request, response) => {
-  console.log("person", persons);
-  response.json(persons);
+  Person.find({}).then((p) => {
+    response.json(p);
+  });
 });
 
 const generateId = () => {
   const randomId = () => Math.floor(Math.random() * 1_000_000);
-  const getId = persons.length > 0 ? randomId() : 0;
+  const getId = person.length > 0 ? randomId() : 0;
   return String(getId);
 };
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-  const nameExists = persons.find((p) => p.name === body.name);
+  const nameExists = person.find((p) => p.name === body.name);
 
   if (!body.name || !body.number) {
     return response.status(400).json({
@@ -71,14 +75,14 @@ app.post("/api/persons", (request, response) => {
     number: body.number,
   };
 
-  persons = persons.concat(person);
+  person = person.concat(person);
 
   response.json(person);
 });
 
 app.get("/api/persons/:id", (request, response) => {
   const id = request.params.id;
-  const person = persons.find((person) => person.id === id);
+  const person = person.find((p) => p.id === id);
 
   if (person) {
     response.json(person);
@@ -89,7 +93,7 @@ app.get("/api/persons/:id", (request, response) => {
 
 app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id;
-  persons = persons.filter((person) => person.id !== id);
+  person = person.filter((p) => p.id !== id);
 
   response.status(204).end();
 });
