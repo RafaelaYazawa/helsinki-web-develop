@@ -91,7 +91,7 @@ const App = () => {
           }, 3000);
         })
         .catch((error) => {
-          setMessage(`${error.messages}`);
+          setMessage(error.response.data.error);
           setMessageType("error");
           setTimeout(() => {
             setMessage(null);
