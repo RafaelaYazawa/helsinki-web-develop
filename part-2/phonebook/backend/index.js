@@ -16,9 +16,9 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-// Unknow URLs
-const unknowEndpoint = (request, response) => {
-  return response.status(404).send({ error: "unknow endpoint" });
+// unknown URLs
+const unknownEndpoint = (request, response) => {
+  return response.status(404).send({ error: "unknown endpoint" });
 };
 
 // Requests
@@ -105,7 +105,7 @@ const errorHandler = (error, request, response, next) => {
 
   next();
 };
-app.use(unknowEndpoint);
+app.use(unknownEndpoint);
 
 const PORT = process.env.PORT;
 
