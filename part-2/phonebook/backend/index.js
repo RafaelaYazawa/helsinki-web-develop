@@ -21,6 +21,7 @@ const unknownEndpoint = (request, response) => {
   return response.status(404).send({ error: "unknown endpoint" })
 }
 
+
 // Requests
 app.get("/info", (request, response) => {
   Person.find({}).then((p) => {
@@ -42,6 +43,7 @@ app.post("/api/people", (request, response, next) => {
     name: body.name,
     number: body.number,
   })
+
 
   person
     .save()

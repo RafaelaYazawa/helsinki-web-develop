@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import personService from "./services/persons";
+import personService from "./services/people";
 import Notification from "./components/Notification";
 import SearchBar from "./components/SearchBar";
 import Form from "./components/Form";
@@ -16,9 +16,14 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    personService.getAll().then((initialNames) => {
-      setPersons(initialNames);
-    });
+    personService
+      .getAll()
+      .then((initialNames) => {
+        setPersons(initialNames);
+      })
+      .catch((error) => {
+        console.log("Error fetching persons:", error);
+      });
   }, []);
 
   const newPerson = (e) => {
@@ -74,27 +79,30 @@ const App = () => {
     } else {
       personService
         .create(addingPerson)
-        .then(
-          (returnPerson) => setPersons(persons.concat(returnPerson)),
-          setNewName(""),
-          setNewPhone("")
-        )
+        .then((returnPerson) => {
+          setPersons(persons.concat(returnPerson));
+          setNewName("");
+          setNewPhone("");
+          setMessage(`${addingPerson.name} was added to the phonebook`);
+          setMessageType("success");
+          setTimeout(() => {
+            setMessage(null);
+            setMessageType(null);
+          }, 3000);
+        })
         .catch((error) => {
-          setMessage(`${error.messages}`);
+          setMessage(error.response.data.error);
           setMessageType("error");
           setTimeout(() => {
             setMessage(null);
             setMessageType(null);
           }, 5000);
         });
-      setMessage(`${addingPerson.name} was added to the phonebook`);
-      setMessageType("success");
-      setTimeout(() => {
-        setMessage(null);
-        setMessageType(null);
-      }, 3000);
     }
   };
+
+  console.log("persons:", persons);
+  console.log("type of persons:", typeof persons);
 
   const filteredPerson = persons.filter((person) =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())

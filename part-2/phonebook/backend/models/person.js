@@ -12,6 +12,7 @@ mongoose
   })
   .catch((error) => {
     console.log('error connecting to MongoDB', error.full_messages);
+
   });
 
 const personSchema = new mongoose.Schema({
@@ -33,7 +34,9 @@ const personSchema = new mongoose.Schema({
   },
 });
 
+
 personSchema.set('toJSON', {
+
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
 
@@ -42,4 +45,6 @@ personSchema.set('toJSON', {
   },
 });
 
+
 module.exports = mongoose.model('Person', personSchema);
+
